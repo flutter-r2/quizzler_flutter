@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'quiz_brain.dart';
 
@@ -30,22 +31,37 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
+  int score = 0;
 
   void checkAnswer(bool userAnswer) {
     setState(() {
-      if (userAnswer == quizBrain.getAnswer()) {
-        scoreKeeper.add(const Icon(
-          Icons.check,
-          color: Colors.green,
-        ));
-      } else {
-        scoreKeeper.add(const Icon(
-          Icons.close,
-          color: Colors.red,
-        ));
-      }
+      if (quizBrain.isFinished()) {
+        Alert(
+          context: context,
+          title: 'Finished',
+          desc: 'You\'ve done it!\nScore:$score',
+        ).show();
 
-      quizBrain.nextQuestion();
+        score = 0;
+        quizBrain.reset();
+        scoreKeeper = [];
+      } else {
+        if (userAnswer == quizBrain.getAnswer()) {
+          scoreKeeper.add(const Icon(
+            Icons.check,
+            color: Colors.green,
+          ));
+
+          score++;
+        } else {
+          scoreKeeper.add(const Icon(
+            Icons.close,
+            color: Colors.red,
+          ));
+        }
+
+        quizBrain.nextQuestion();
+      }
     });
   }
 
