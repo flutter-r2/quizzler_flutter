@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'quiz_brain.dart';
 
-QuizBrain questionBank = QuizBrain();
+QuizBrain quizBrain = QuizBrain();
 
 void main() => runApp(Quizzler());
 
@@ -29,18 +29,23 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-  int currentQuestion = 0;
   List<Icon> scoreKeeper = [];
 
-  void nextQuestion(IconData? icon, Color color) {
+  void checkAnswer(bool userAnswer) {
     setState(() {
-      scoreKeeper.add(
-        Icon(
-          icon,
-          color: color,
-        ),
-      );
-      currentQuestion++;
+      if (userAnswer == quizBrain.getAnswer()) {
+        scoreKeeper.add(const Icon(
+          Icons.check,
+          color: Colors.green,
+        ));
+      } else {
+        scoreKeeper.add(const Icon(
+          Icons.close,
+          color: Colors.red,
+        ));
+      }
+
+      quizBrain.nextQuestion();
     });
   }
 
@@ -56,7 +61,7 @@ class _QuizPageState extends State<QuizPage> {
             padding: EdgeInsets.all(10.0),
             child: Center(
               child: Text(
-                questionBank.getQuestion(currentQuestion),
+                quizBrain.getQuestion(),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25.0,
@@ -81,7 +86,7 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked true.
-                nextQuestion(Icons.check, Colors.green);
+                checkAnswer(true);
               },
             ),
           ),
@@ -100,7 +105,7 @@ class _QuizPageState extends State<QuizPage> {
               ),
               onPressed: () {
                 //The user picked false.
-                nextQuestion(Icons.cancel, Colors.red);
+                checkAnswer(false);
               },
             ),
           ),
